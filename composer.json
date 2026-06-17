@@ -1,16 +1,18 @@
 {
-    "name": "assouan/http-router",
+    "name": "assouan/router",
     "description": "Attribute-based HTTP routing utilities for the A PHP libraries.",
     "type": "library",
     "license": "proprietary",
     "require": {
         "php": ">=8.5",
+        "assouan/controller": "^0.1",
         "assouan/http-message": "^0.1",
-        "assouan/http-sender": "^0.1"
+        "assouan/http-request": "^0.1",
+        "assouan/sender": "^0.1"
     },
     "autoload": {
         "psr-4": {
-            "A\\": "src/A/"
+            "A\\Http\\": "src/A/Http/"
         }
     }
 }

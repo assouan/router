@@ -1,9 +1,9 @@
-# Assouan HTTP Router
+# Assouan Router
 
 Attribute-based HTTP routing utilities for the A PHP libraries.
 
 ```bash
-composer require assouan/http-router
+composer require assouan/router
 ```
 
-Requires PHP 8.4 or later.
+Requires PHP 8.5 or later.

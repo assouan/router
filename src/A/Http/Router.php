@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace A\Http;
 
 class Router
@@ -18,27 +20,7 @@ class Router
 
     public function map(string $filepath) : static
     {
-        $declared = get_declared_classes();
-
-        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($filepath, \FilesystemIterator::SKIP_DOTS)) as $file)
-        {
-            if ($file instanceof \SplFileInfo && $file->getExtension() === 'php')
-            {
-                include_once $file->getRealPath();
-            }
-        }
-
-        foreach (array_diff(get_declared_classes(), $declared) as $class)
-        {
-            $route = $this->route_for($class);
-
-            if ($route)
-            {
-                $this->route($route->path, $class);
-            }
-        }
-
-        return $this;
+        return (new Mapper($filepath))->map($this);
     }
 
     public function route(string $pattern, string $action) : static
@@ -90,32 +72,4 @@ class Router
         );
     }
 
-    protected function route_for(string $class) : ?Route
-    {
-        $reflection = new \ReflectionClass($class);
-        $route = null;
-
-        do
-        {
-            $current = null;
-
-            foreach ($reflection->getAttributes() as $attribute)
-            {
-                $instance = $attribute->newInstance();
-
-                if ($instance instanceof Route)
-                {
-                    $current = $instance;
-                    break;
-                }
-            }
-
-            if ($current)
-            {
-                $route = $route ? $route->inherit($current) : $current;
-            }
-        } while ($reflection = $reflection->getParentClass());
-
-        return $route;
-    }
 }
