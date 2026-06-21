@@ -10,22 +10,20 @@ class Application
 {
     public Router $router;
 
+    protected bool $mapped = false;
+
     public function __construct(
         protected string $root,
         protected mixed $fallback = null,
     ) {
-        $this->router = (new Router())->map($root . '/app');
-
-        if (is_dir($root . '/api'))
-        {
-            $this->router->map($root . '/api');
-        }
+        $this->router = new Router();
     }
 
     public function run() : int
     {
         try
         {
+            $this->map();
             $response = $this->router->dispatch(Request::from_globals(), $this->fallback);
         }
         catch (HttpException $exception)
@@ -40,5 +38,22 @@ class Application
         Sender::send($response);
 
         return 0;
+    }
+
+    protected function map() : void
+    {
+        if ($this->mapped)
+        {
+            return;
+        }
+
+        $this->router->map($this->root . '/app');
+
+        if (is_dir($this->root . '/api'))
+        {
+            $this->router->map($this->root . '/api');
+        }
+
+        $this->mapped = true;
     }
 }
